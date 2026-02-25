@@ -32,7 +32,7 @@ export default function Hero() {
             asChild
           >
             <a
-              href="https://github.com/Baisayan/lynq"
+              href="https://github.com/Baisayan/stride"
               target="_blank"
               rel="noopener noreferrer"
             >

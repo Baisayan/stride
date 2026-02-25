@@ -1,4 +1,7 @@
 "use client";
+import CtaSection from "@/components/landing/Cta";
+import FaqSection from "@/components/landing/Faq";
+import Footer from "@/components/landing/Footer";
 import HeroSection from "@/components/landing/Hero";
 import Navbar from "@/components/landing/Navbar";
 
@@ -8,10 +11,10 @@ export default function LandingPage() {
       <Navbar />
       <div className="max-w-7xl mx-auto">
         <HeroSection />
-        <FAQSection />
+        <FaqSection />
         <CtaSection />
-        <Footer />
       </div>
+      <Footer />
     </div>
   );
 }

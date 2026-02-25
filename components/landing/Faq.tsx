@@ -9,28 +9,28 @@ import {
 
 const faqData = [
   {
-    question: "Who is Lynq for?",
+    question: "Who is Stride for?",
     answer:
-      "Lynq is built for individuals and indie hackers who want to get things done instead of wasting time on complicated tools. If you're building something solo or with a small team, and you want a simple, fast way to manage tasks without all the bloat, Lynq is for you.",
+      "Stride is built for individuals and indie hackers who want to get things done instead of wasting time on complicated tools. If you're building something solo or with a small team, and you want a simple, fast way to manage tasks without all the bloat, Stride is for you.",
   },
   {
-    question: "Is Lynq free?",
+    question: "Is Stride free?",
     answer:
-      "Yes! Lynq is completely free and open source. You can also self-host it on your own server.",
+      "Yes! Stride is completely free and open source. You can also self-host it on your own server.",
   },
   {
     question: "Do I need a team to use it?",
     answer:
-      "Nope. While Lynq supports teams, it works great for solo projects too. Create your workspace, add projects, and start managing tasks. Invite others later if you want.",
+      "Nope. While Stride supports teams, it works great for solo projects too. Create your workspace, add projects, and start managing tasks. Invite others later if you want.",
   },
   {
     question: "Is my data safe?",
     answer:
-      "Yes. Lynq uses secure authentication and you can self-host it to keep your data on your own server. The code is open source, so you can verify everything yourself.",
+      "Yes. Stride uses secure authentication and you can self-host it to keep your data on your own server. The code is open source, so you can verify everything yourself.",
   },
 ];
 
-export default function FAQ() {
+export default function FaqSection() {
   return (
     <div className="w-full py-12 md:py-20 relative">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,7 +40,7 @@ export default function FAQ() {
             Frequently Asked Questions
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-2">
-            Everything you need to know about Lynq
+            Everything you need to know about Stride
           </p>
         </div>
 
@@ -64,4 +64,4 @@ export default function FAQ() {
       </div>
     </div>
   );
-};
+}
