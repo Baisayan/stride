@@ -30,7 +30,7 @@ export default function SignUpPage() {
         provider: "google",
         callbackURL: redirectUrl,
       });
-    } catch (err) {
+    } catch {
       setError("Failed to sign up with Google");
       setLoading(false);
     }

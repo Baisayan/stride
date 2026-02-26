@@ -47,7 +47,7 @@ export default function SignInPage() {
         provider: "google",
         callbackURL: redirectUrl,
       });
-    } catch (err) {
+    } catch {
       setError("Failed to sign in with Google");
       setLoading(false);
     }
