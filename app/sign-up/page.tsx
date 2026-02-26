@@ -5,6 +5,13 @@ import { authClient } from "@/lib/auth-client";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function SignUpPage() {
   const searchParams = useSearchParams();
@@ -28,45 +35,23 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="flex items-center justify-center p-8">
-        <div className="w-full max-w-md space-y-8">
-          {/* Logo */}
-          <div className="flex items-center space-x-3">
-            <span className="text-foreground text-xl font-medium tracking-tight">
-              Stride
-            </span>
-          </div>
-
-          {/* Welcome Message */}
-          <div className="space-y-2">
-            <h1 className="text-3xl font-light tracking-tight text-foreground">
-              Create your account
-            </h1>
-            <p className="text-base text-muted-foreground">
-              Sign up to start your journey with Stride
-            </p>
-          </div>
-
+    <div className="flex min-h-screen items-center justify-center p-4 bg-muted/50">
+      <Card className="w-full max-w-md shadow-lg">
+        <CardHeader>
+          <CardTitle>Stride</CardTitle>
+          <CardDescription>Create your account to get started</CardDescription>
+        </CardHeader>
+        <CardContent>
           {error && (
             <div className="rounded-md bg-destructive/15 border border-destructive/50 p-3 text-sm text-destructive">
               {error}
             </div>
           )}
 
-          {/* Google Sign Up Button */}
-          <Button
-            type="button"
-            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 justify-center"
-            onClick={handleGoogleSignUp}
-            disabled={loading}
-          >
-            <span className="ml-2">
-              {loading ? "Signing up..." : "Sign up with Google"}
-            </span>
+          <Button type="button" onClick={handleGoogleSignUp} disabled={loading}>
+            {loading ? "Signing up..." : "Sign up with Google"}
           </Button>
 
-          {/* Sign In Link */}
           <div className="text-center text-sm text-muted-foreground">
             Already have an account?{" "}
             <Link
@@ -76,8 +61,8 @@ export default function SignUpPage() {
               Sign in
             </Link>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

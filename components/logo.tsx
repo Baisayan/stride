@@ -1,0 +1,18 @@
+interface LogoProps {
+  className?: string;
+}
+
+export default function Logo({ className }: LogoProps) {
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      fill="currentColor"
+    >
+      <polygon points="20,15 90,15 65,35 20,35" />
+      <polygon points="35,65 80,65 80,85 10,85" />
+      <polygon points="20,40 20,60 80,60 80,40" />
+    </svg>
+  );
+}

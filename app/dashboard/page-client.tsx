@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
-import { TeamSelector } from "@/components/shared/team-selector";
-import { DashboardLoader } from "@/components/ui/dashboard-loader";
+// import { TeamSelector } from "@/components/shared/team-selector";
+// import { DashboardLoader } from "@/components/ui/dashboard-loader";
 import { authClient } from "@/lib/auth-client";
 
 export function PageClient() {
@@ -37,10 +37,10 @@ export function PageClient() {
   if (isPending) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <DashboardLoader
+        {/* <DashboardLoader
           message="Loading teams"
           submessage="Setting up your workspace..."
-        />
+        /> */}
       </div>
     );
   }
@@ -49,14 +49,14 @@ export function PageClient() {
   if (!session) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <DashboardLoader
+        {/* <DashboardLoader
           message="Redirecting..."
           submessage="Please sign in to continue"
-        />
+        /> */}
       </div>
     );
   }
 
   // User is authenticated, show team selector
-  return <TeamSelector />;
+  // return <TeamSelector />;
 }
