@@ -5,6 +5,15 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import Logo from "@/components/logo";
+import Image from "next/image";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -45,45 +54,49 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="flex items-center justify-center p-8">
-        <div className="w-full max-w-md space-y-8">
-          {/* Logo */}
-          <div className="flex items-center space-x-3">
-            <span className="text-foreground text-xl font-medium tracking-tight">
+    <div className="flex min-h-screen items-center justify-center p-2 bg-muted/10">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <CardTitle className="flex justify-center items-center gap-1 tracking-wide text-2xl">
+            Welcome to
+            <span className="flex justify-center items-center gap-1 font-bold">
+              <Logo className="size-7" />
               Stride
             </span>
-          </div>
+          </CardTitle>
+          <CardDescription>
+            Built for teams that move work forward.
+          </CardDescription>
+        </CardHeader>
 
-          {/* Welcome Message */}
-          <div className="space-y-2">
-            <h1 className="text-3xl font-light tracking-tight text-foreground">
-              Welcome back
-            </h1>
-            <p className="text-base text-muted-foreground">
-              Sign in to your account to continue your journey with Stride
-            </p>
-          </div>
-
+        <CardContent className="grid">
           {error && (
-            <div className="rounded-md bg-destructive/15 border border-destructive/50 p-3 text-sm text-destructive">
+            <div className="rounded-md bg-destructive/15 border border-destructive/50 p-3 text-sm text-destructive mb-6">
               {error}
             </div>
           )}
 
-          {/* Google Sign In Button */}
+          <p className="text-center mb-4 text-muted-foreground">
+            Sign in to your account to continue
+          </p>
+
           <Button
             type="button"
-            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 justify-center"
+            variant="outline"
+            className="py-5 text-base mb-4"
             onClick={handleGoogleSignIn}
             disabled={loading}
           >
-            <span className="ml-2">
-              {loading ? "Signing in..." : "Sign in with Google"}
-            </span>
+            {loading ? (
+              "Signing in..."
+            ) : (
+              <div className="flex gap-3 font-semibold">
+                Sign in with Google
+                <Image src="/google.svg" alt="Google" width={20} height={20} />
+              </div>
+            )}
           </Button>
 
-          {/* Sign Up Link */}
           <div className="text-center text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}
             <Link
@@ -93,8 +106,8 @@ export default function SignInPage() {
               Sign up
             </Link>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
