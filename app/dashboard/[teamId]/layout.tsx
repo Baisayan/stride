@@ -1,0 +1,346 @@
+"use client";
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { GithubIcon, LogOut } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import { useParams, useRouter, usePathname } from "next/navigation";
+// import { DashboardLoader } from "@/components/ui/dashboard-loader";
+// import { WorkspaceSelector } from "@/components/shared/workspace-selector";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+function useSegment(basePath: string) {
+  const path = usePathname();
+  const result = path.slice(basePath.length, path.length);
+  return result ? result : "/";
+}
+
+type NavigationItem = {
+  name: string;
+  href?: string;
+  type: "item" | "label";
+};
+
+const navigationItems: NavigationItem[] = [
+  {
+    name: "Issues",
+    href: "/issues",
+    type: "item",
+  },
+  {
+    name: "Projects",
+    href: "/projects",
+    type: "item",
+  },
+  {
+    type: "label",
+    name: "Management",
+  },
+  {
+    name: "Management",
+    href: "/management",
+    type: "item",
+  },
+  {
+    name: "People",
+    href: "/people",
+    type: "item",
+  },
+];
+
+function HeaderBreadcrumb({
+  items,
+  baseBreadcrumb,
+  basePath,
+}: {
+  items: NavigationItem[];
+  baseBreadcrumb?: { title: string; href: string }[];
+  basePath: string;
+}) {
+  const segment = useSegment(basePath);
+  const item = items.find(
+    (item) => item.type === "item" && item.href === segment,
+  );
+  const title: string | undefined = item?.name;
+
+  return (
+    <Breadcrumb>
+      <BreadcrumbList>
+        {baseBreadcrumb
+          ?.map((item, index) => [
+            <BreadcrumbItem key={`item-${index}`}>
+              <BreadcrumbLink href={item.href}>{item.title}</BreadcrumbLink>
+            </BreadcrumbItem>,
+            <BreadcrumbSeparator key={`separator-${index}`} />,
+          ])
+          .flat()}
+        <BreadcrumbItem>
+          <BreadcrumbPage>{title}</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
+  );
+}
+
+function AppSidebar({
+  items,
+  basePath,
+  sidebarTop,
+}: {
+  items: NavigationItem[];
+  basePath: string;
+  sidebarTop?: React.ReactNode;
+}) {
+  const segment = useSegment(basePath);
+
+  return (
+    <Sidebar>
+      <SidebarHeader className="border-b border-sidebar-border">
+        {sidebarTop}
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {items.map((item, index) => {
+                if (item.type === "label") {
+                  return (
+                    <SidebarGroupLabel key={`label-${index}`} className="px-2">
+                      {item.name}
+                    </SidebarGroupLabel>
+                  );
+                }
+
+                const isActive = item.href ? segment === item.href : false;
+
+                // Navigation item with href
+                return (
+                  <SidebarMenuItem key={`item-${index}`}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive}
+                      tooltip={item.name}
+                    >
+                      <Link href={basePath + (item.href || "")}>
+                        <span>{item.name}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter className="border-t border-sidebar-border p-4">
+        <Link
+          href="https://github.com/kartiklabhshetwar/doable"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 w-full py-2 px-4 rounded-lg bg-sidebar-accent hover:bg-sidebar-accent/80 transition-colors"
+        >
+          <GithubIcon className="size-4" />
+          <span className="text-sm font-medium">Proudly Open Source</span>
+        </Link>
+      </SidebarFooter>
+    </Sidebar>
+  );
+}
+
+export default function Layout(props: { children: React.ReactNode }) {
+  const params = useParams<{ teamId: string }>();
+  const { data: session } = authClient.useSession();
+  const router = useRouter();
+  const [team, setTeam] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
+  useEffect(() => {
+    // Fetch team data
+    const fetchTeam = async () => {
+      try {
+        const response = await fetch("/api/teams");
+        if (response.ok) {
+          const teams = await response.json();
+          const currentTeam = teams.find((t: any) => t.id === params.teamId);
+          if (currentTeam) {
+            setTeam(currentTeam);
+            setLoading(false);
+          } else {
+            // If team not found, redirect to dashboard immediately
+            setIsRedirecting(true);
+            setLoading(false);
+            router.replace("/dashboard");
+            return; // Exit early to prevent rendering
+          }
+        } else {
+          // If response not ok, redirect to dashboard
+          setIsRedirecting(true);
+          setLoading(false);
+          router.replace("/dashboard");
+        }
+      } catch (error) {
+        console.error("Error fetching team:", error);
+        setLoading(false);
+        setIsRedirecting(true);
+        // Redirect to dashboard on error
+        router.replace("/dashboard");
+      }
+    };
+    fetchTeam();
+  }, [params.teamId, router]);
+
+  const handleSignOut = async () => {
+    await authClient.signOut();
+    window.location.href = "/sign-in";
+  };
+
+  // Don't render anything if redirecting
+  if (isRedirecting) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        {/* <DashboardLoader message="Redirecting..." submessage="Team not found" /> */}
+      </div>
+    );
+  }
+
+  // Show loading while team is being fetched
+  if (loading || !team) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        {/* <DashboardLoader
+          message="Loading team"
+          submessage="Fetching team data..."
+        /> */}
+      </div>
+    );
+  }
+
+  const items = navigationItems(() => {});
+  const basePath = `/dashboard/${team.id}`;
+  const baseBreadcrumb = [
+    {
+      title: team.displayName || team.name,
+      href: basePath,
+    },
+  ];
+
+  return (
+    <SidebarProvider>
+      <AppSidebar
+        items={items}
+        basePath={basePath}
+        // sidebarTop={
+        //   <WorkspaceSelector
+        //     currentTeamId={team.id}
+        //     currentTeamName={team.name}
+        //   />
+        // }
+      />
+      <SidebarInset className="overflow-x-hidden">
+        {/* Header */}
+        <header className="h-16 border-b border-border/50 bg-card/95 backdrop-blur supports-backdrop-filter:bg-card/60 sticky top-0 z-10">
+          <div className="flex items-center justify-between h-full px-6">
+            {/* Left side - Sidebar trigger + Breadcrumb */}
+            <div className="flex items-center space-x-4">
+              <SidebarTrigger />
+              <HeaderBreadcrumb
+                baseBreadcrumb={baseBreadcrumb}
+                basePath={basePath}
+                items={items}
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              {session?.user && (
+                <>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className="relative h-10 w-10 rounded-full"
+                      >
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage
+                            src={session.user.image || undefined}
+                            alt={session.user.name || ""}
+                          />
+                          <AvatarFallback>
+                            {session.user.name?.charAt(0)?.toUpperCase() ||
+                              session.user.email?.charAt(0)?.toUpperCase() ||
+                              "U"}
+                          </AvatarFallback>
+                        </Avatar>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      className="w-56"
+                      align="end"
+                      forceMount
+                    >
+                      <DropdownMenuLabel className="font-normal">
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-medium leading-none">
+                            {session.user.name || "User"}
+                          </p>
+                          <p className="text-xs leading-none text-muted-foreground">
+                            {session.user.email}
+                          </p>
+                        </div>
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={handleSignOut}
+                        className="text-red-600"
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Sign out</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </>
+              )}
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <main className="flex-1 overflow-hidden bg-background">
+          <div className="px-6 py-6 h-full overflow-auto">{props.children}</div>
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
+  );
+}

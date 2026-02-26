@@ -11,16 +11,15 @@ export function PageClient() {
   const { data: session, isPending } = authClient.useSession();
   const hasRedirected = useRef(false);
 
-  // Redirect to sign-up if no session after loading
+  // Redirect to sign-up if no session
   useEffect(() => {
     if (!isPending && !session && !hasRedirected.current) {
       hasRedirected.current = true;
-      // Use replace instead of push to avoid adding to history
       router.replace("/sign-in");
     }
   }, [isPending, session, router]);
 
-  // Fallback: force redirect if useEffect didn't trigger within 200ms
+  // force redirect if useEffect didn't trigger within 200ms
   useEffect(() => {
     if (!isPending && !session) {
       const timer = setTimeout(() => {
