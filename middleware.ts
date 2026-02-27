@@ -22,7 +22,7 @@ export async function middleware(request: NextRequest) {
         cookies.has("better-auth.session");
     }
 
-    // secure other routes under /dashboard
+    // secure routes under /dashboard
     if (pathname.startsWith("/dashboard")) {
       if (!hasSession) {
         const signUpUrl = new URL("/sign-up", request.url);
